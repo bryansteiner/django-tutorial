@@ -10,17 +10,29 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
-import os
+import environ
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# This function gets the current files path ~/git/modern-django/config/base.py and moves up
+# three levels to ~/git/modern-django/
+ROOT_DIR = environ.Path(__file__) - 3
+
+# APPS_DIR will point to a folder that will hold the applications we create
+APPS_DIR = ROOT_DIR.path('project')
+
+# A function that will find a .env file in our project root, then read_env() to make use of them
+env = environ.Env()
+# This section added from an update to standards in CookieCutter Django to ensure
+# no errors are encountered at runserver/migrations
+READ_DOT_ENV_FILE = env.bool('DJANGO_READ_DOT_ENV_FILE', default=False)
+if READ_DOT_ENV_FILE:
+    env_file = str(ROOT_DIR.path('.env'))
+    print('Loading : {}'.format(env_file))
+    env.read_env(env_file)
+    print('The .env file has been loaded. See base.py for more information')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '_wu1qzq4g!dzr0t%xeanbnx3kjo%khi^dr@86gg2-rq=7c)nxr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
